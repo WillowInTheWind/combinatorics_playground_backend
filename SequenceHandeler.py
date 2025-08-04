@@ -73,7 +73,7 @@ def fullparentheses_by_n_r(n,r):
     paths = SequenceGenerator.Nariyana_sequence(n,r)
     for path in paths:
         size = 50*(len(path)+1)
-        im = Image.new("RGBA", (size+5,105), color=(0,0,0,0))
+        im = Image.new("RGBA", (size+5-50,105), color=(0,0,0,0))
         draw = ImageDraw.Draw(im)
         current_x= 0
         current_y = 0
