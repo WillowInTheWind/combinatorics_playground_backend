@@ -90,11 +90,11 @@ def fullparentheses_by_n_r(n,r):
         images.append(im)
     return images
 
-def domino_tiling_by_n(n):
+def domino_tiling_by_n_r(n,r):
     images = []
     paths = SequenceGenerator.fibbonaci_sequence(n)
     for path in paths:
-        size = 100*len(path)
+        size = 100*path.count("1")+50*path.count("0")+20
         im = Image.new("RGBA", (size,int(size/2)), color=(0,0,0,0))
         draw = ImageDraw.Draw(im)
         current_x= 0
@@ -183,5 +183,3 @@ def binarytrees_by_n_r(n,r):
         images.append(im)
     return images
 
-for i in range(3):
-    fullparentheses_by_n_r(2,i)
