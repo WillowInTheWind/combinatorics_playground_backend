@@ -90,7 +90,7 @@ def fullparentheses_by_n_r(n,r):
         images.append(im)
     return images
 
-def domino_tiling_by_n(n):
+def domino_tiling_by_n_r(n,r):
     images = []
     paths = SequenceGenerator.fibbonaci_sequence(n)
     for path in paths:

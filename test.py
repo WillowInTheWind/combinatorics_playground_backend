@@ -1,44 +1,60 @@
 import math
-from pstats import SortKey
+import matplotlib.pyplot as plt
 
+def P(a,b):
+  if a == 0 or b == 0:
+    return 0
+  if b == 1:
+    return a
+  r = a % b
+  q = (a-r)/b
+  p = (b+1)*q*b/2 + P(b,r)
+  return int(p)
 
-def triangulate(b):
-    return b*(b+1)/2
-def lattices(a,b):
-    if b == 0:
-        return 0
-    if b == 1:
-        return a
-    r=a%b
-    q = (a-r)//b
-    p = triangulate(b)*q + lattices(b,r)
-    return p
-
-def is_prime(p):
-  # if p % 3 != 1:
-  #   return False
-  # print(max)
-  for i in range(2, int(math.sqrt(2*p))+3):
-    for k in range(2, math.ceil(2*p/(i+1))):
+def is_weak_triangular_prime(n):
+  for i in range(2,int(2*n/3)+1):
+    for k in range(2,i+1):
       if math.gcd(i,k) != 1:
         continue
-      value = lattices(k,i)
-      if int(value) == int(p):
-        return [i,k]
+      if n == P(i,k):
+        return False
 
   return True
 
-# K_MAX = 2**32
-#
-# sequence = set()
-# greatest_in_sequence = 4
-# remainders_sequence = [0, 1, 1]
-# for i in range(greatest_in_sequence,K_MAX):
-#   a = math.sqrt(2*i)
-#   remainders = []
-#   for k in range(1, int(a)+1):
-#     remainders.append(int(i%(k*(k+1)/2)))
-#   #print(f"{i}: {remainders} \n")
+
+def is_triangular_prime(n):
+  for i in range(2,int(2*n/3)+1):
+    for k in range(2,i+1):
+      if n == P(i,k):
+        return False
+
+  return True
+
+from sympy import isprime
+import matplotlib.pyplot as plt
+import numpy as np
+
+def f(x):
+  return x/np.log(x)
+N = 300
+input  = np.linspace(0,N, 1)
+output = f(input)
+xs = np.arange(N+1)
+primes = np.vectorize(isprime)(xs)
+weak_primes = np.vectorize(is_weak_triangular_prime)(xs)
+
+y1 = np.cumsum(primes)
+y2 = np.cumsum(weak_primes)
+# y2 = primes/output
+ax = plt.subplot()
+# ax.step(xs, y1, marker='o', where='post', label='primes')
+ax.step(xs, y2, marker='o', where='post', label='weak primes')
+ax.plot(input, output)
+ax.set_yticks(xs)
+ax.set_xticks(xs)
+
+ax.legend()
+
 #   if (i % 10000 == 0):
 #     print(f"----------- {i} reached")
 #   a = len(remainders_sequence)
@@ -62,32 +78,4 @@ def is_prime(p):
 # for k in range(1, int(a)+1):
 #     remainders.append(int(180253%(k*(k+1)/2)))
 #
-# print(remainders)
-last = 1
-differences = []
-three_differences = []
-weak_primes = []
-for k in range(1,6000):
-    i = 3*k+1
-    prime = is_prime(i)
-    if prime == True:
-        difference = i-last
-        differences.append(difference)
-        three_difference = int(difference / 3)
-        three_differences.append(three_difference)
-        weak_primes.append(i)
-        # print(i)
-        last = i
-    # elif prime == False:
-    #     continue
-    else:
-        print(f"{i}:{prime}")
-
-
-print(differences)
-print(three_differences)
-
-
-print(weak_primes)
-print(sorted(differences))
-print(sorted(three_differences))
+plt.show()
