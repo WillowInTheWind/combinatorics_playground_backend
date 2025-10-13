@@ -1,5 +1,4 @@
 SequenceGenerator
-turtle
 sys
 PIL
 math
