@@ -48,3 +48,6 @@ def return_subsets_by_n_r(combinatorial_sequence, combinatorial_object, method):
 @app.route("/sequences")
 def all_sequences():
     return DatabaseHandeler.sequences()
+
+if __name__ == "__main__":
+    app.run()
