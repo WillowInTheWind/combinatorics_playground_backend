@@ -1,8 +1,5 @@
 import SequenceGenerator
-import turtle
-import sys
 from PIL import Image, ImageDraw
-import math
 
 def pixelstrips_by_n_r(n, r):
     images = []
