@@ -9,6 +9,7 @@ import flask_cors
 from flask_cors import CORS, cross_origin
 
 from SequenceGenerator import n_such_that_there_are_k_sequences
+import json
 
 app = Flask(__name__)
 cors = CORS(app) # allow CORS for all domains on all routes.
@@ -48,14 +49,9 @@ def return_subsets_by_n_r(combinatorial_sequence, combinatorial_object, method):
     except:
         return Response(response = "object reference incorrectly specified", status = 400)
     result = bar(n,r)
-    encoded_imges = []
-    for image in result:
-        byte_arr = io.BytesIO()
-        image.save(byte_arr, format='PNG')  # convert the PIL image to byte array
-        encoded_img = encodebytes(byte_arr.getvalue()).decode('ascii')  # encode as base64
-        encoded_imges.append(encoded_img)
-    print(f"REQUEST MADE - {n}, {r}, {len(encoded_imges) }")
-    return jsonify({'result': encoded_imges})
+
+    print(f"REQUEST MADE - {n}, {r}, {len(result) }")
+    return jsonify({'result': result})
 
 @app.route("/sequences")
 def all_sequences():
@@ -67,27 +63,25 @@ if __name__ == "__main__":
 
 
 @app.route("/api/fixed_total/<combinatorial_object>")
-def return_subsets_by_n_r( combinatorial_object):
+def return_cards_up_to_total_k( combinatorial_object):
     combinatorial_sequence = OBJECT_TO_SEQUENCE_TABLE[combinatorial_object]
-    n = request.args.get("total")
-    if n == "" :
+    total = request.args.get("total")
+    if total == "" :
         return Response(response = "failed to specify n or r ", status = 400)
+    if total == "0" :
+        return Response(response = "failed to specify n  ", status = 400)
     try:
-        n = int(n)
+        total = int(total)
     except TypeError:
         return Response(response = "n was not an integer", status = 400)
-    if n > MAX_N:
+    if total > MAX_N:
         return Response(response = "n was to large", status = 400)
     try:
-        bar = getattr(SequenceHandeler, combinatorial_object + "_by_less_than_n" )
+        bar = getattr(SequenceHandeler, combinatorial_object + "_up_to" )
     except:
         return Response(response = "object reference incorrectly specified", status = 400)
-    result = bar(n_such_that_there_are_k_sequences(n, combinatorial_sequence))[0:n]
-    encoded_imges = []
-    for image in result:
-        byte_arr = io.BytesIO()
-        image.save(byte_arr, format='PNG')  # convert the PIL image to byte array
-        encoded_img = encodebytes(byte_arr.getvalue()).decode('ascii')  # encode as base64
-        encoded_imges.append(encoded_img)
-    print(f"REQUEST MADE - {n}, {len(encoded_imges) }")
-    return jsonify({'result': encoded_imges})
+    result = bar(n_such_that_there_are_k_sequences(total, combinatorial_sequence))[0:total]
+
+    print(f"REQUEST MADE - {total}, {len(result) }")
+    return Response(json.dumps(result), status = 200)
+
