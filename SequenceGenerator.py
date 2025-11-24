@@ -1,3 +1,6 @@
+import math
+
+
 def binary_strings(n, r):
     strings = set()
     if n < r or r < 0 or n == 0:
@@ -53,4 +56,18 @@ def fibbonaci_sequence(n):
     for word in fibbonaci_sequence(n - 2):
         strings.add("1" + word)
     return list(strings)
+
+
+def n_such_that_there_are_k_sequences(k, sequence ):
+    if sequence == 0:
+        return math.ceil(math.log( k+1,2)-1)
+    if sequence == 1:
+        total_sum = 0
+        index = 0
+        while total_sum <= k:
+            total_sum += 2 ** index
+            index += 1
+        return index
+    else:
+        return k
 
