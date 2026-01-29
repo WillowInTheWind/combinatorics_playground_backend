@@ -65,7 +65,7 @@ def n_such_that_there_are_k_sequences(k, sequence ):
         total_sum = 0
         index = 0
         while total_sum <= k:
-            total_sum += 2 ** index
+            total_sum += math.comb(2*index,index) - math.comb(2*index,index+1)
             index += 1
         return index
     else:
