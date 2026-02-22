@@ -5,18 +5,20 @@ from PIL import Image, ImageDraw
 import io
 from base64 import encodebytes
 
+from SequenceGenerator import n_such_that_there_are_k_sequences
+
 MAX_RESOLUTION = 2520
 
 
 def pixelstrips_up_to(n_max):
     cards = []
     k=0
+
     for n in range(n_max+1):
         for r in range(n):
             paths = SequenceGenerator.binary_strings(n,r)
             for path in paths:
                 # size = 100 * len(path)
-
                 section_increment = math.floor(MAX_RESOLUTION/len(path))
                 im = Image.new("RGBA", (MAX_RESOLUTION+10, int(section_increment) +5), color=(0, 0, 0, 0))
                 draw = ImageDraw.Draw(im)
@@ -24,15 +26,12 @@ def pixelstrips_up_to(n_max):
                 current_y = 0
                 for letter in path:
                 # movement = ((-1)**(1+int(letter)))*100
-                    draw.rectangle(xy = [current_x, current_y, current_x+section_increment, current_y+section_increment], width = 30, fill =(0,0,0,128*(int(letter))), outline = (0,0,0,256))
+                    draw.rectangle(xy = [current_x, current_y, current_x+section_increment, current_y+section_increment], width = 30, fill =(64,64,64,256*(int(letter))), outline = (0,0,0,256))
                     current_x += section_increment
             # write to stdout
-                    byte_arr = io.BytesIO()
-                    im.save(byte_arr, format='PNG')  # convert the PIL image to byte array
-                    encoded_img = encodebytes(byte_arr.getvalue()).decode('ascii')  # encode as base64
-                    card ={"graphic": encoded_img, "n": n, "r": r, "id":k}
-                    cards.append(card)
-                    k += 1
+                im.save(f'pixelstrips/pixelstrip{k}.png')
+                k += 1
+
     return cards
 
 def dyckpaths_up_to(n_max):
@@ -68,12 +67,14 @@ def dyckpaths_up_to(n_max):
                 draw.ellipse([current_x - section_increment - 30, current_y + section_increment - 30,
                               current_x - section_increment + 30, current_y + section_increment + 30],
                              fill=(0, 0, 0, 256))
-                byte_arr = io.BytesIO()
-                im.save(byte_arr, format='PNG')  # convert the PIL image to byte array
-                encoded_img = encodebytes(byte_arr.getvalue()).decode('ascii')  # encode as base64
 
-                card ={"graphic": encoded_img, "n": n, "r": r, "id":k}
-                cards.append(card)
+                im.save(f'Dyck/Dyck{path}.svg')
+                # byte_arr = io.BytesIO()
+                # im.save(byte_arr, format='PNG')  # convert the PIL image to byte array
+                # encoded_img = encodebytes(byte_arr.getvalue()).decode('ascii')  # encode as base64
+                #
+                # card ={"graphic": encoded_img, "n": n, "r": r, "id":k}
+                # cards.append(card)
                 k +=1
     return cards
 
@@ -183,11 +184,12 @@ def starfolkspaths_up_to(n_max):
 def nonattackingrooks_up_to(n_max):
     cards = []
     k = 0
+    id = 0
     for n in range(n_max + 1):
         for r in range(n):
             paths = SequenceGenerator.binary_strings(n, r)
             for path in paths:
-
+                id += 1
                 size = 50 * len(path)
                 im = Image.new("RGBA", (size+10, int(size+10)), color=(0, 0, 0, 0))
                 draw = ImageDraw.Draw(im)
@@ -201,6 +203,7 @@ def nonattackingrooks_up_to(n_max):
                     current_x += x_increase
                     current_y += y_increase
                     # write to stdout
+
 
                 byte_arr = io.BytesIO()
                 im.save(byte_arr, format='PNG')  # convert the PIL image to byte array
@@ -237,6 +240,7 @@ def binarytrees_up_to(n_max):
                         current_y -= 100
                         current_x -= 100
 
+
                 byte_arr = io.BytesIO()
                 im.save(byte_arr, format='PNG')  # convert the PIL image to byte array
                 encoded_img = encodebytes(byte_arr.getvalue()).decode('ascii')  # encode as base64
@@ -256,3 +260,7 @@ class CardPackage:
         self.id = identification
         self.n = n
         self.r =  r
+
+
+if (__name__ == "__main__"):
+    pixelstrips_up_to(5);
